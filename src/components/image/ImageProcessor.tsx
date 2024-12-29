@@ -1,8 +1,8 @@
 import React, {useState} from "react";
-import {useImage} from "./ImageContext.tsx";
+import {useImage} from "./ImageContext";
 
 const ImageProcessor: React.FC = () => {
-    const { image } = useImage();
+    const {image} = useImage();
     const [rows, setRows] = useState<number>(5);
     const [columns, setColumns] = useState<number>(5);
 
@@ -67,22 +67,20 @@ const ImageProcessor: React.FC = () => {
 
     return (
         <div>
-            {image ? (
-                <>
-                    <img src={image} alt="Uploaded" style={{ maxWidth: '100%', marginBottom: '10px' }} />
-                    <div style={{ marginBottom: '10px' }}>
-                        <label>
-                            Rows: <input type="number" value={rows} onChange={(e) => setRows(Number(e.target.value))} min={1} />
-                        </label>
-                        <label style={{ marginLeft: '10px' }}>
-                            Columns: <input type="number" value={columns} onChange={(e) => setColumns(Number(e.target.value))} min={1} />
-                        </label>
-                    </div>
-                    <button onClick={handleDownload}>Download Edited Image</button>
-                </>
-            ) : (
-                <p>No image uploaded yet.</p>
-            )}
+            <>
+                <img src={image} alt="Uploaded" style={{maxWidth: '100%', marginBottom: '10px'}}/>
+                <div style={{marginBottom: '10px'}}>
+                    <label>
+                        Rows: <input type="number" value={rows} onChange={(e) => setRows(Number(e.target.value))}
+                                     min={1}/>
+                    </label>
+                    <label style={{marginLeft: '10px'}}>
+                        Columns: <input type="number" value={columns}
+                                        onChange={(e) => setColumns(Number(e.target.value))} min={1}/>
+                    </label>
+                </div>
+                <button onClick={handleDownload}>Download Edited Image</button>
+            </>
         </div>
     );
 };
