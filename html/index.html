@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <style>
+        .image-container {
+            display: grid;
+            grid-template-columns: repeat(var(--columns, 3), var(--cell-size, 1fr)); /* Число столбцов */
+            grid-template-rows: repeat(var(--rows, 3), var(--cell-size, auto)); /* Число строк */
+            gap: var(--gap, 10px); /* Пространство между изображениями */
+            padding: var(--padding-top, 0) var(--padding-right, 0) var(--padding-bottom, 0) var(--padding-left, 0); /* Отступы */
+            justify-content: center; /* Выравнивание строк по центру */
+        }
+        .image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            height: auto;
+            display: block; /* Убираем лишние пространства вокруг изображений */
+            margin: auto; /* Центрирование изображений в ячейках */
+        }
+        .rotate-90 {
+            transform: rotate(90deg);
+        }
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
+        .rotate-270 {
+            transform: rotate(270deg);
+        }
+        .answer-list {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="image-container" id="image-container"></div>
+<div class="answer-list" id="answer-list"></div>
+
+<script>
+    // Пример массива изображений
+    const images = [
+        'image1.jpg',
+        'image2.jpg',
+        'image3.jpg',
+        'image4.jpg',
+        'image5.jpg',
+        'image6.jpg',
+        // Добавьте сюда остальные изображения
+    ];
+
+    // Функция для перемешивания массива
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    // Перемешиваем массив изображений
+    const shuffledImages = [...images];
+    shuffleArray(shuffledImages);
+
+    // Получаем контейнер для изображений
+    const imageContainer = document.getElementById('image-container');
+
+    // Устанавливаем параметры сетки
+    const columns = 2; // Число столбцов
+    const rows = 3; // Число строк
+    const gap = 10; // Пространство между изображениями
+    imageContainer.style.setProperty('--columns', columns);
+    imageContainer.style.setProperty('--rows', rows);
+    imageContainer.style.setProperty('--gap', `${gap}px`);
+
+    // Устанавливаем отступы
+    const paddingTop = '20px'; // Отступ сверху
+    const paddingRight = '15px'; // Отступ справа
+    const paddingBottom = '20px'; // Отступ снизу
+    const paddingLeft = '15px'; // Отступ слева
+    imageContainer.style.setProperty('--padding-top', paddingTop);
+    imageContainer.style.setProperty('--padding-right', paddingRight);
+    imageContainer.style.setProperty('--padding-bottom', paddingBottom);
+    imageContainer.style.setProperty('--padding-left', paddingLeft);
+
+    // Флаг для поворота изображений
+    const rotateFlag = true;
+
+    // Функция для загрузки изображения и получения его размеров
+    function loadImage(src) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve({ width: img.width, height: img.height });
+            img.onerror = reject;
+            img.src = src;
+        });
+    }
+
+    // Загружаем все изображения и определяем максимальный размер
+    Promise.all(images.map(image => loadImage(image)))
+        .then(sizes => {
+            const maxSize = Math.max(...sizes.map(size => Math.max(size.width, size.height))) + gap;
+            imageContainer.style.setProperty('--cell-size', `${maxSize}px`);
+
+            // Добавляем изображения в контейнер
+            const imagePositions = [];
+            shuffledImages.forEach((image, index) => {
+                const imgElement = document.createElement('img');
+                imgElement.src = image;
+                const row = Math.floor(index / columns) + 1; // Номер строки
+                const column = (index % columns) + 1; // Номер столбца
+                imagePositions.push({ image, row, column });
+
+                // Поворот изображения, если флаг установлен
+                if (rotateFlag && Math.random() > 0.5) {
+                    const rotation = Math.floor(Math.random() * 3) * 90; // 90, 180 или 270 градусов
+                    imgElement.classList.add(`rotate-${rotation}`);
+                }
+
+                imageContainer.appendChild(imgElement);
+            });
+
+            // Создаем список с ответами
+            const answerList = document.getElementById('answer-list');
+            images.forEach(image => {
+                const position = imagePositions.find(pos => pos.image === image);
+                const listItem = document.createElement('div');
+                listItem.textContent = `${image} - Row: ${position.row}, Column: ${position.column}`;
+                answerList.appendChild(listItem);
+            });
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки изображений:', error);
+        });
+</script>
+</body>
+</html>
