@@ -1,8 +1,11 @@
-import React, {createContext, ReactNode, useContext, useState} from "react";
+import React, {createContext, ReactNode, useState} from "react";
 
 interface ImageContextType {
-    image: string | null;
-    setImage: (image: string | null) => void;
+    userImage: string | null;
+    setUserImage: (image: string | null) => void;
+    editedImage: string | null;
+    setEditedImage: (image: string | null) => void;
+
 }
 
 const ImageContext = createContext<ImageContextType | undefined>(undefined);
@@ -11,23 +14,25 @@ interface ImageProviderProps {
     children: ReactNode;
 }
 const ImageProvider: React.FC<ImageProviderProps> = ({ children }) => {
-    const [image, setImage] = useState<string | null>(null);
+    const [userImage, setUserImage] = useState<string | null>(null);
+    const [editedImage, setEditedImage] = useState<string | null>(null);
+
+    console.log(
+        "userImage", userImage
+    )
 
     return (
-        <ImageContext.Provider value={{ image, setImage }}>
+        <ImageContext.Provider value={{
+            userImage,
+            setUserImage,
+            editedImage,
+            setEditedImage
+        }}>
             {children}
         </ImageContext.Provider>
     );
 };
 
-const useImage = (): ImageContextType => {
-    const context = useContext(ImageContext);
-    if (!context) {
-        throw new Error('useImage must be used within an ImageProvider');
-    }
-    return context;
-};
-
 export {
-    useImage, ImageProvider
+    ImageProvider, ImageContext, ImageContextType
 };

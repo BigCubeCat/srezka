@@ -17,10 +17,18 @@ const App: React.FC = () => {
                     display: 'flex',
                     justifyContent: 'center'
                 }}
-                     onClick={() => console.log('')}>
-                    <Typography variant={'h2'} className={'unselectable'}>Срезка</Typography>
+                     onClick={() => console.log('')}
+                >
+                    <Typography variant={'h2'} className={'unselectable'}>
+                        Срезка
+                    </Typography>
                 </Box>
-                <Box sx={{width: '100vw'}}>
+                <Box sx={{
+                    width: '100vw',
+                    marginTop: 5,
+                    display: 'flex',
+                    justifyContent: 'center'
+                }}>
                     <Switch>
                         <Route path="/" component={ImageUploader}/>
                         <Route path="/proc" component={ImageProcessor}/>

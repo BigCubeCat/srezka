@@ -1,5 +1,5 @@
 import React from "react";
-import {useImage} from "./ImageContext";
+import useImage from "./useImage";
 import {Box, Typography} from "@mui/material";
 import {MuiFileInput} from "mui-file-input";
 import {Redirect} from "wouter";
@@ -8,14 +8,14 @@ const ImageUploader: React.FC = () => {
     const [file, setFile] = React.useState<File|null>(null);
     const [fileExists, setFileExists] = React.useState<boolean>(false);
 
-    const {setImage} = useImage();
+    const {setUserImage} = useImage();
 
     const handleChange = (f: File | null) => {
         if (f === null) return;
         setFile(f);
         if (f) {
             const reader = new FileReader();
-            reader.onload = (e) => setImage(e.target?.result as string);
+            reader.onload = (e) => setUserImage(e.target?.result as string);
             reader.readAsDataURL(f);
             setFileExists(true);
         }
