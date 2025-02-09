@@ -7,15 +7,14 @@
     <style>
         .image-container {
             display: grid;
-            grid-template-columns: repeat(var(--columns, 3), var(--cell-size, 1fr)); /* Число столбцов */
-            grid-template-rows: repeat(var(--rows, 3), var(--cell-size, auto)); /* Число строк */
+            grid-template-columns: repeat(var(--columns, 3), 1fr); /* Число столбцов */
+            grid-template-rows: repeat(var(--rows, 3), auto); /* Число строк */
             gap: var(--gap, 10px); /* Пространство между изображениями */
             padding: var(--padding-top, 0) var(--padding-right, 0) var(--padding-bottom, 0) var(--padding-left, 0); /* Отступы */
             justify-content: center; /* Выравнивание строк по центру */
         }
         .image-container img {
-            max-width: 100%;
-            max-height: 100%;
+            width: 100%;
             height: auto;
             display: block; /* Убираем лишние пространства вокруг изображений */
             margin: auto; /* Центрирование изображений в ячейках */
@@ -32,12 +31,26 @@
         .answer-list {
             margin-top: 20px;
         }
+        .pdf-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
 <div class="image-container" id="image-container"></div>
 <div class="answer-list" id="answer-list"></div>
+<button class="pdf-button" onclick="generatePDF()">Создать PDF</button>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
 <script>
     // Пример массива изображений
     const images = [
@@ -66,8 +79,8 @@
     const imageContainer = document.getElementById('image-container');
 
     // Устанавливаем параметры сетки
-    const columns = 2; // Число столбцов
-    const rows = 3; // Число строк
+    const columns = 3; // Число столбцов
+    const rows = 2; // Число строк
     const gap = 10; // Пространство между изображениями
     imageContainer.style.setProperty('--columns', columns);
     imageContainer.style.setProperty('--rows', rows);
@@ -99,8 +112,9 @@
     // Загружаем все изображения и определяем максимальный размер
     Promise.all(images.map(image => loadImage(image)))
         .then(sizes => {
-            const maxSize = Math.max(...sizes.map(size => Math.max(size.width, size.height))) + gap;
-            imageContainer.style.setProperty('--cell-size', `${maxSize}px`);
+            const maxWidth = Math.max(...sizes.map(size => size.width));
+            const maxHeight = Math.max(...sizes.map(size => size.height));
+            const maxSize = Math.max(maxWidth, maxHeight) + gap;
 
             // Добавляем изображения в контейнер
             const imagePositions = [];
@@ -128,10 +142,51 @@
                 listItem.textContent = `${image} - Row: ${position.row}, Column: ${position.column}`;
                 answerList.appendChild(listItem);
             });
+
+            // Устанавливаем размер изображений для печати
+            adjustImageSizeForPDF();
+
         })
         .catch(error => {
             console.error('Ошибка загрузки изображений:', error);
         });
+
+    // Функция для создания PDF
+    function generatePDF() {
+        const buttons = document.querySelectorAll('.pdf-button');
+        buttons.forEach(button => button.classList.add('hidden'));
+
+        const element = document.body;
+        const opt = {
+            margin:       0.5,
+            filename:     'gallery.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            buttons.forEach(button => button.classList.remove('hidden'));
+        }).catch(err => {
+            console.error('Ошибка при создании PDF:', err);
+            buttons.forEach(button => button.classList.remove('hidden'));
+        });
+    }
+
+    // Функция для динамического изменения размера изображений
+    function adjustImageSizeForPDF() {
+        const images = document.querySelectorAll('.image-container img');
+        const totalImages = images.length;
+        const pageWidth = 8.5 * 72; // Ширина страницы в пикселях (8.5 дюймов * 72 пикселя на дюйм)
+        const pageHeight = 11 * 72; // Высота страницы в пикселях (11 дюймов * 72 пикселя на дюйм)
+        const maxImageWidth = (pageWidth - (columns + 1) * gap) / columns;
+        const maxImageHeight = (pageHeight - (rows + 1) * gap) / rows;
+
+        images.forEach(img => {
+            img.style.maxWidth = `${maxImageWidth}px`;
+            img.style.maxHeight = `${maxImageHeight}px`;
+        });
+    }
 </script>
 </body>
 </html>
