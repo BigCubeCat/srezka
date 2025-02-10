@@ -8,6 +8,9 @@ import FileLoader from "./FileLoader";
 import { useImageData } from "~/hooks/useImageData";
 import { useGridConf } from "~/hooks/useGridConf";
 
+import "./Main.css";
+import exportToPdf from "~/utils/pdf";
+
 const Main: Component = () => {
   const { rows, cols, color, setRows, setCols, setColor } = useGridConf();
   const { setImageSrc, generateGrid, fullImageDataUrl, cellDataUrls } =
@@ -30,6 +33,10 @@ const Main: Component = () => {
     generateGrid(rows(), cols(), color());
   };
 
+  const exportFile = () => {
+    exportToPdf(fullImageDataUrl() || "", cellDataUrls(), rows(), cols());
+  };
+
   return (
     <div class="MainComponent">
       <Config
@@ -41,7 +48,9 @@ const Main: Component = () => {
         setColor={setColorFunc}
       />
       <FileLoader imageCallback={setImage} dataUrl={fullImageDataUrl() || ""} />
-      <Result data={cellDataUrls()} cols={cols()} />
+      <button type="button" onClick={exportFile} class="download-button">
+        Скачать
+      </button>
     </div>
   );
 };

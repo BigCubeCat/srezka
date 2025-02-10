@@ -17,7 +17,12 @@ const ColorPicker: Component<ColorPickerProps> = (props) => {
   return (
     <div class="Row">
       <div class="Label">{props.label}</div>
-      <input class="ColorPicker" type="color" value={props.value} onInput={handleChange} />
+      <input
+        class="ColorPicker"
+        type="color"
+        value={props.value}
+        onInput={handleChange}
+      />
     </div>
   );
 };

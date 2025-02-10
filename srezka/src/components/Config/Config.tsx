@@ -17,17 +17,13 @@ interface IConfigProps {
 
 const Config: Component<IConfigProps> = (props: IConfigProps) => {
   return (
-    <>
-    <div class="Geometry">
-      <Row label="Строк" value={props.rows} callback={props.setRows} />
-      <Row label="Столбцов" value={props.cols} callback={props.setCols} />
+    <div class="Config">
+      <div class="Geometry">
+        <Row label="Строк" value={props.rows} callback={props.setRows} />
+        <Row label="Столбцов" value={props.cols} callback={props.setCols} />
+      </div>
+      <ColorPicker label="Цвет" onChange={props.setColor} value={props.color} />
     </div>
-     <ColorPicker
-        label="Цвет"
-        onChange={props.setColor}
-        value={props.color}
-      />
-    </>
   );
 };
 
