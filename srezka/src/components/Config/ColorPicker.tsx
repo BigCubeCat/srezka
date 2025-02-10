@@ -1,9 +1,10 @@
 // ColorPicker.tsx
 import { Component } from "solid-js";
+import "./Row.css";
 
 interface ColorPickerProps {
-  label: string; // подпись, например "Цвет сетки" или "Цвет подписей"
-  value: string; // текущее выбранное значение цвета, например "#ff0000"
+  label: string;
+  value: string;
   onChange: (color: string) => void; // функция-обработчик изменения цвета
 }
 
@@ -14,11 +15,9 @@ const ColorPicker: Component<ColorPickerProps> = (props) => {
   };
 
   return (
-    <div style={{ marginBottom: "10px" }}>
-      <label>
-        {props.label}:{" "}
-        <input type="color" value={props.value} onInput={handleChange} />
-      </label>
+    <div class="Row">
+      <div class="Label">{props.label}</div>
+      <input class="ColorPicker" type="color" value={props.value} onInput={handleChange} />
     </div>
   );
 };

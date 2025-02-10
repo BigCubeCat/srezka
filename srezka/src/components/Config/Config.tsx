@@ -4,6 +4,7 @@ import { Component } from "solid-js";
 import { useGridConf } from "../../hooks/useGridConf";
 
 import ColorPicker from "./ColorPicker";
+import Row from "./Row";
 
 interface IConfigProps {
   color: string;
@@ -17,30 +18,12 @@ interface IConfigProps {
 const Config: Component<IConfigProps> = (props: IConfigProps) => {
   return (
     <>
-      <div style={{ marginBottom: "10px" }}>
-        <label>
-          Количество строк (A):{" "}
-          <input
-            type="number"
-            min="1"
-            value={props.rows}
-            onInput={(e) => props.setRows(parseInt(e.currentTarget.value))}
-          />
-        </label>
-      </div>
-      <div style={{ marginBottom: "10px" }}>
-        <label>
-          Количество столбцов (B):{" "}
-          <input
-            type="number"
-            min="1"
-            value={props.cols}
-            onInput={(e) => props.setCols(parseInt(e.currentTarget.value))}
-          />
-        </label>
-      </div>
-      <ColorPicker
-        label="Цвет линий"
+    <div class="Geometry">
+      <Row label="Строк" value={props.rows} callback={props.setRows} />
+      <Row label="Столбцов" value={props.cols} callback={props.setCols} />
+    </div>
+     <ColorPicker
+        label="Цвет"
         onChange={props.setColor}
         value={props.color}
       />
