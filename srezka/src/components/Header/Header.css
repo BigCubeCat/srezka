@@ -1,0 +1,15 @@
+.header {
+  width: 100vw;
+  height: 3rem;
+  color: black;
+
+  text-align: center;
+
+  background-image: url("bg.png");
+}
+
+.header-text {
+  color: #ffffff; /* Цвет текста */
+  -webkit-text-stroke: 2px #0f0f0f; /* Толщина и цвет обводки */
+  text-stroke: 2px #0f0f0f; /* Толщина и цвет обводки (стандартное свойство) */
+}

@@ -1,0 +1,39 @@
+.Config {
+  display: flex;
+  flex-direction: column;
+}
+
+.Geometry {
+  display: flex;
+  justify-content: space-between;
+
+  width: 250px;
+}
+
+.Column {
+  margin-top: 1rem;
+  min-width: 100px;
+  height: 3rem;
+
+  align-items: center;
+}
+
+.Row {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.Label {
+  font-size: 1.5rem;
+  min-width: 100px;
+}
+
+.SpinBox {
+  width: 7rem;
+  height: 2rem;
+}
+
+.ColorPicker {
+  margin-top: 10px;
+}
