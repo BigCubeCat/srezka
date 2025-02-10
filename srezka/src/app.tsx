@@ -4,10 +4,10 @@ import { useGridConf } from "./hooks/useGridConf";
 import { useImageData } from "./hooks/useImageData";
 
 const App: Component = () => {
-  const { rows, setRows, cols, setCols } = useGridConf(5, 5);
-  const { setImageSrc, fullImageDataUrl, cellDataUrls, generateGrid } = useImageData();
+  const { rows, setRows, cols, setCols } = useGridConf(3, 3);
+  const { imageSrc, setImageSrc, fullImageDataUrl, cellDataUrls, generateGrid } = useImageData();
 
-  // Обработка выбора файла
+  // Обработка выбора файла (поддерживаются PNG и JPG)
   const handleFileChange = (e: Event) => {
     const target = e.target as HTMLInputElement;
     if (target.files && target.files[0]) {
@@ -52,9 +52,9 @@ const App: Component = () => {
         </label>
       </div>
 
-      {/* Загрузка файла */}
+      {/* Загрузка файла – поддерживаются PNG и JPG */}
       <div style={{ marginBottom: "10px" }}>
-        <input type="file" accept="image/png" onChange={handleFileChange} />
+        <input type="file" accept="image/png, image/jpeg" onChange={handleFileChange} />
       </div>
 
       {/* Кнопка генерации */}
@@ -91,7 +91,6 @@ const App: Component = () => {
             }}
           >
             {cellDataUrls().map((cellUrl, index) => {
-              console.log(index, cellUrl);
               const rowIndex = Math.floor(index / cols());
               const colIndex = index % cols();
               const label = `${String.fromCharCode(65 + rowIndex)}${colIndex + 1}`;
