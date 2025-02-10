@@ -3,11 +3,14 @@ import { Component } from "solid-js";
 import { useGridConf } from "./hooks/useGridConf";
 import { useImageData } from "./hooks/useImageData";
 
+import ColorPicker from "./components/ColorPicker";
+
 import { Button } from "@kobalte/core/button";
 import './app.css'
+import Header from "./components/Header/Header";
 
 const App: Component = () => {
-  const { rows, setRows, cols, setCols } = useGridConf(3, 3);
+  const { rows, setRows, cols, setCols, color, setColor } = useGridConf(3, 3);
   const { imageSrc, setImageSrc, fullImageDataUrl, cellDataUrls, generateGrid } = useImageData();
 
   // Обработка выбора файла (поддерживаются PNG и JPG)
@@ -24,12 +27,14 @@ const App: Component = () => {
   };
 
   const onGenerateGrid = () => {
-    generateGrid(rows(), cols());
+    generateGrid(rows(), cols(), color());
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Генератор тренировочного материала для ориентирования</h1>
+    <div class="app">
+      <Header />
+
+      <ColorPicker label="Цвет сетки" value={color()} onChange={setColor}  />
 
       {/* Настройка количества строк и столбцов */}
       <div style={{ marginBottom: "10px" }}>

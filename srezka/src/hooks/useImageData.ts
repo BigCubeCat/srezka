@@ -2,12 +2,15 @@
 import { createSignal } from "solid-js";
 import { cutCells } from "./imageUtils";
 
+const X_GAP = 15;
+const Y_GAP = 12;
+
 export const useImageData = () => {
     const [imageSrc, setImageSrc] = createSignal<string | null>(null);
     const [fullImageDataUrl, setFullImageDataUrl] = createSignal<string | null>(null);
     const [cellDataUrls, setCellDataUrls] = createSignal<string[]>([]);
 
-    const generateGrid = (rows: number, cols: number) => {
+    const generateGrid = (rows: number, cols: number, color: string) => {
         if (!imageSrc()) return;
 
         const image = new Image();
@@ -42,7 +45,7 @@ export const useImageData = () => {
             setCellDataUrls(cutCells(rows, cols, cellWidth, cellHeight, canvas));
 
             // Рисуем вертикальные линии сетки.
-            ctx.strokeStyle = "red";
+            ctx.strokeStyle = color;
             ctx.lineWidth = 2;
             for (let j = 0; j <= cols; j++) {
                 const x = j * cellWidth;
@@ -63,14 +66,14 @@ export const useImageData = () => {
 
             // Рисуем метки в центрах ячеек (буква строки и номер столбца).
             ctx.font = "20px Arial";
-            ctx.fillStyle = "blue";
+            ctx.fillStyle = color;
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             for (let i = 0; i < rows; i++) {
                 for (let j = 0; j < cols; j++) {
                     const label = `${String.fromCharCode(65 + i)}${j + 1}`;
-                    const centerX = j * cellWidth + cellWidth / 2;
-                    const centerY = i * cellHeight + cellHeight / 2;
+                    const centerX = j * cellWidth + X_GAP;
+                    const centerY = i * cellHeight + Y_GAP;
                     ctx.fillText(label, centerX, centerY);
                 }
             }
