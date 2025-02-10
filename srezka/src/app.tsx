@@ -3,6 +3,9 @@ import { Component } from "solid-js";
 import { useGridConf } from "./hooks/useGridConf";
 import { useImageData } from "./hooks/useImageData";
 
+import { Button } from "@kobalte/core/button";
+import './app.css'
+
 const App: Component = () => {
   const { rows, setRows, cols, setCols } = useGridConf(3, 3);
   const { imageSrc, setImageSrc, fullImageDataUrl, cellDataUrls, generateGrid } = useImageData();
@@ -59,7 +62,7 @@ const App: Component = () => {
 
       {/* Кнопка генерации */}
       <div style={{ marginBottom: "20px" }}>
-        <button onClick={onGenerateGrid}>Сгенерировать сетку</button>
+        <Button class="button" onClick={onGenerateGrid}>сгенерировать</Button>
       </div>
 
       {/* Вывод итогового изображения */}
