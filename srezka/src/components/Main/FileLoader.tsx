@@ -3,7 +3,6 @@ import { Component } from "solid-js";
 
 interface IFileLoaderProps {
   dataUrl: string;
-  callback: () => void;
   imageCallback: (src: string) => void;
 }
 
@@ -28,15 +27,6 @@ const FileLoader: Component<IFileLoaderProps> = (props: IFileLoaderProps) => {
           onChange={handleFileChange}
         />
       </div>
-
-      {/* Кнопка генерации */}
-      <div style={{ marginBottom: "20px" }}>
-        <button class="button" onClick={props.callback}>
-          сгенерировать
-        </button>
-      </div>
-
-      {/* Вывод итогового изображения */}
       {props.dataUrl && (
         <div style={{ marginBottom: "20px" }}>
           <h2>Измененное изображение</h2>

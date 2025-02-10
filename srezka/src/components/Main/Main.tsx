@@ -10,9 +10,23 @@ import { useGridConf } from "~/hooks/useGridConf";
 
 const Main: Component = () => {
   const { rows, cols, color, setRows, setCols, setColor } = useGridConf();
-  const { setImageSrc, generateGrid, fullImageDataUrl, cellDataUrls } = useImageData();
+  const { setImageSrc, generateGrid, fullImageDataUrl, cellDataUrls } =
+    useImageData();
 
-  const onGenerate = () => {
+  const setImage = (image: string) => {
+    setImageSrc(image);
+    generateGrid(rows(), cols(), color());
+  };
+
+  const decorateIntFunc = (func: (arg: number) => (arg: number) => void) => {
+    return (arg: number) => {
+      func(arg);
+      generateGrid(rows(), cols(), color());
+    };
+  };
+
+  const setColorFunc = (col: string) => {
+    setColor(col);
     generateGrid(rows(), cols(), color());
   };
 
@@ -22,19 +36,12 @@ const Main: Component = () => {
         rows={rows()}
         cols={cols()}
         color={color()}
-        setRows={setRows}
-        setCols={setCols}
-        setColor={setColor}
+        setRows={decorateIntFunc(setRows)}
+        setCols={decorateIntFunc(setCols)}
+        setColor={setColorFunc}
       />
-      <FileLoader
-        callback={onGenerate}
-        imageCallback={setImageSrc}
-        dataUrl={fullImageDataUrl() || ""}
-      />
-      <Result
-        data={cellDataUrls()}
-        cols={cols()}
-       />
+      <FileLoader imageCallback={setImage} dataUrl={fullImageDataUrl() || ""} />
+      <Result data={cellDataUrls()} cols={cols()} />
     </div>
   );
 };

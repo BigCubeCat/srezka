@@ -5,7 +5,7 @@ import { Component } from "solid-js";
 interface IResultProps {
   cols: number;
   data: string[];
-};
+}
 
 const Result: Component<IResultProps> = (props: IResultProps) => {
   return (
