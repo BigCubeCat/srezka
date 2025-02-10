@@ -2,8 +2,8 @@
 import { Component } from "solid-js";
 
 interface ColorPickerProps {
-  label: string;               // подпись, например "Цвет сетки" или "Цвет подписей"
-  value: string;               // текущее выбранное значение цвета, например "#ff0000"
+  label: string; // подпись, например "Цвет сетки" или "Цвет подписей"
+  value: string; // текущее выбранное значение цвета, например "#ff0000"
   onChange: (color: string) => void; // функция-обработчик изменения цвета
 }
 
