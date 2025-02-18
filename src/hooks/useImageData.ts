@@ -48,7 +48,7 @@ export const useImageData = () => {
 
       // Рисуем вертикальные линии сетки.
       ctx.strokeStyle = color;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 6; // Увеличиваем толщину линий
       for (let j = 0; j <= cols; j++) {
         const x = j * cellWidth;
         ctx.beginPath();
@@ -67,7 +67,7 @@ export const useImageData = () => {
       }
 
       // Рисуем метки в центрах ячеек (буква строки и номер столбца).
-      ctx.font = "20px Arial";
+      ctx.font = "bold 30px Arial"; // Увеличиваем размер и делаем шрифт жирным
       ctx.fillStyle = color;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
