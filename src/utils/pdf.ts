@@ -1,8 +1,8 @@
 import { jsPDF } from "jspdf";
 
-const MARGIN = 5;
-const MAX_WIDTH = 210 - 2 * MARGIN;
-const MAX_HEIGHT = 297 - 2 * MARGIN;
+const MARGIN = 5; // Отступы от краёв листа в мм
+const MAX_WIDTH = 210 - 2 * MARGIN; // Максимальная ширина для изображения (половина листа А4)
+const MAX_HEIGHT = 297 - 2 * MARGIN; // Максимальная высота для изображения (половина листа А4)
 
 const exportToPdf = (src: string, cells: string[], rows: number, cols: number) => {
   if (!src) {
@@ -25,32 +25,84 @@ const exportToPdf = (src: string, cells: string[], rows: number, cols: number) =
     // Вычисляем натуральные размеры картинки в мм
     const fullImgWidthMm = (fullImg.width * 25.4) / dpi;
     const fullImgHeightMm = (fullImg.height * 25.4) / dpi;
-    // Добавляем картинку на первую страницу в натуральном размере
-    // (расположив её с отступом margin от верхнего левого угла)
+
+    // Масштабируем изображение, чтобы оно занимало половину листа А4
+    const scale = Math.min(MAX_WIDTH / fullImgWidthMm, MAX_HEIGHT / fullImgHeightMm);
+    const scaledWidth = fullImgWidthMm * scale;
+    const scaledHeight = fullImgHeightMm * scale;
+
+    // Создаём canvas для рисования сетки и нумерации
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    canvas.width = fullImg.width;
+    canvas.height = fullImg.height;
+
+    // Рисуем изображение на canvas
+    ctx.drawImage(fullImg, 0, 0, canvas.width, canvas.height);
+
+    // Рисуем вертикальные линии сетки
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 2;
+    for (let j = 0; j <= cols; j++) {
+      const x = (j * canvas.width) / cols;
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, canvas.height);
+      ctx.stroke();
+    }
+
+    // Рисуем горизонтальные линии сетки
+    for (let i = 0; i <= rows; i++) {
+      const y = (i * canvas.height) / rows;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvas.width, y);
+      ctx.stroke();
+    }
+
+    // Рисуем метки по периметру
+    ctx.font = "bold 30px Arial"; // Крупный и жирный шрифт
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    // Буквы по горизонтали (сверху)
+    for (let j = 0; j < cols; j++) {
+      const label = String.fromCharCode(65 + j); // A, B, C, ...
+      const x = (j * canvas.width) / cols + canvas.width / (2 * cols);
+      const y = 20; // Отступ сверху
+      ctx.fillText(label, x, y);
+    }
+
+    // Цифры по вертикали (слева)
+    for (let i = 0; i < rows; i++) {
+      const label = `${i + 1}`; // 1, 2, 3, ...
+      const x = 20; // Отступ слева
+      const y = (i * canvas.height) / rows + canvas.height / (2 * rows);
+      ctx.fillText(label, x, y);
+    }
+
+    // Конвертируем canvas в Data URL
+    const numberedImageUrl = canvas.toDataURL("image/png");
+
+    // Добавляем изображение с сеткой и нумерацией на первую страницу
     doc.addImage(
-      fullImg,
+      numberedImageUrl,
       "PNG",
       MARGIN,
       MARGIN,
-      Math.min(fullImgWidthMm, MAX_WIDTH),
-      Math.min(fullImgHeightMm, MAX_HEIGHT),
+      scaledWidth,
+      scaledHeight,
     );
 
-    // Добавляем вторую страницу для ячеек
+    // Добавляем вторую страницу для кусочков
     doc.addPage();
 
-    // Фиксированный размер ячейки – 3×3 см (30×30 мм)
-    const cellWidth = fullImgWidthMm / cols; // мм
-    const cellHeight = fullImgWidthMm / rows; // мм
-    const cellMargin = 5; // отступ между ячейками в мм
-
-    // Вычисляем, сколько ячеек по горизонтали можем разместить на странице
-    // (с учётом отступов по краям)
-    const availableWidth = pageWidth - 2 * MARGIN;
-    const colsPerRow = Math.floor(
-      (availableWidth + cellMargin) / (cellWidth + cellMargin),
-    );
-    const effectiveCols = colsPerRow > 0 ? colsPerRow : 1;
+    // Размеры кусочков
+    const cellWidth = scaledWidth / cols; // Ширина кусочка в мм
+    const cellHeight = scaledHeight / rows; // Высота кусочка в мм
 
     // Перемешиваем массив ячеек (алгоритмом Фишера–Йетса)
     for (let i = cells.length - 1; i > 0; i--) {
@@ -58,31 +110,54 @@ const exportToPdf = (src: string, cells: string[], rows: number, cols: number) =
       [cells[i], cells[j]] = [cells[j], cells[i]];
     }
 
-    // Размещаем ячейки на странице (добавляем новые страницы, если ячеек много)
+    // Размещаем кусочки в таблице n x m
+    const n = rows; // Количество строк для кусочков
+    const m = cols; // Количество столбцов для кусочков
+
     let x = MARGIN;
     let y = MARGIN;
-    let colCounter = 0;
-    cells.forEach((cellUrl) => {
-      // Если добавление ячейки выйдет за нижний отступ страницы, создаём новую страницу
-      if (y + cellHeight > pageHeight - MARGIN) {
-        doc.addPage();
-        x = MARGIN;
-        y = MARGIN;
-        colCounter = 0;
-      }
-      doc.addImage(cellUrl, "PNG", x, y, cellWidth, cellHeight);
-      colCounter++;
-      if (colCounter >= effectiveCols) {
-        colCounter = 0;
-        x = MARGIN;
-        y += cellHeight + cellMargin;
-      } else {
-        x += cellHeight + cellMargin;
-      }
+    cells.forEach((cellUrl, index) => {
+      // Поворачиваем некоторые кусочки на 180 градусов
+      const isRotated = Math.random() > 0.5;
+      const piece = isRotated ? rotateImage(cellUrl, 180) : cellUrl;
+
+      const pieceImage = new Image();
+      pieceImage.src = piece;
+
+      pieceImage.onload = () => {
+        doc.addImage(pieceImage, "PNG", x, y, cellWidth, cellHeight);
+
+        // Переход к следующей ячейке
+        x += cellWidth;
+        if ((index + 1) % m === 0) {
+          x = MARGIN;
+          y += cellHeight;
+        }
+      };
     });
 
     // Сохраняем PDF
     doc.save("output.pdf");
   };
 };
+
+// Функция для поворота изображения на 180 градусов
+const rotateImage = (src: string, degrees: number): string => {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return src;
+
+  const img = new Image();
+  img.src = src;
+
+  canvas.width = img.width;
+  canvas.height = img.height;
+
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.rotate((degrees * Math.PI) / 180);
+  ctx.drawImage(img, -img.width / 2, -img.height / 2);
+
+  return canvas.toDataURL("image/png");
+};
+
 export default exportToPdf;
