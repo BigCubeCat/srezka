@@ -7,7 +7,7 @@ const GAP = 5; // Промежуток между кусочками в мм
 
 const exportToPdf = (src: string, cells: string[], rows: number, cols: number) => {
   if (!src) {
-    alert("Сначала сгенерируйте изображение!");
+    alert("Пожалуйста, подождите! Изображение еще не было сгенерировано.");
     return;
   }
 
