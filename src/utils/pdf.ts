@@ -5,6 +5,14 @@ const MAX_WIDTH = 210 - 2 * MARGIN; // Максимальная ширина д�
 const MAX_HEIGHT = (297 / 2) - 2 * MARGIN; // Максимальная высота для изображения (верхняя половина листа А4, равная А5)
 const GAP = 5; // Промежуток между кусочками в мм
 
+// Для перевода px -> мм (при экспорте первой страницы) выбираем DPI (например, 96)
+const DPI = 96;
+const CONVERT_TO_MM_SCALE = 25.4;
+
+const size_in_mm = (value: number) => {
+  return (value * CONVERT_TO_MM_SCALE) / DPI;
+}
+
 const exportToPdf = (src: string, cells: string[], rows: number, cols: number) => {
   if (!src) {
     alert("Пожалуйста, подождите! Изображение еще не было сгенерировано.");
@@ -13,25 +21,15 @@ const exportToPdf = (src: string, cells: string[], rows: number, cols: number) =
 
   // Создаём PDF-документ. Единицы измерения – миллиметры.
   const doc = new jsPDF("p", "mm", "a4");
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-
-  // Для перевода px -> мм (при экспорте первой страницы) выбираем DPI (например, 96)
-  const dpi = 96;
-
   // Создаём объект Image для полной картинки
   const fullImg = new Image();
   fullImg.src = src!;
   fullImg.onload = () => {
     // Вычисляем натуральные размеры картинки в мм
-    const fullImgWidthMm = (fullImg.width * 25.4) / dpi;
-    const fullImgHeightMm = (fullImg.height * 25.4) / dpi;
-
+    const fullImgWidthMm =  size_in_mm(fullImg.width);
+    const fullImgHeightMm = size_in_mm(fullImg.height);
     // Определяем, нужно ли повернуть изображение
-    let shouldRotate = false;
-    if (fullImgWidthMm < fullImgHeightMm) {
-      shouldRotate = true;
-    }
+    const shouldRotate =  (fullImgWidthMm < fullImgHeightMm);
 
     // Масштабируем изображение, чтобы оно занимало верхнюю половину листа А4
     const scale = Math.min(
@@ -44,7 +42,10 @@ const exportToPdf = (src: string, cells: string[], rows: number, cols: number) =
     // Создаём canvas для рисования сетки и нумерации
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!ctx){
+      alert("Неожиданная ошибка! Пожалуйста, напишите на e.bitochkin@g.nsu.ru")
+      return;
+    } 
 
     canvas.width = shouldRotate ? fullImg.height : fullImg.width;
     canvas.height = shouldRotate ? fullImg.width : fullImg.height;

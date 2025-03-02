@@ -3,7 +3,6 @@
 import { Component } from "solid-js";
 
 import Config from "../Config/Config";
-import Result from "../Result/Result";
 import FileLoader from "./FileLoader";
 import { useImageData } from "~/hooks/useImageData";
 import { useGridConf } from "~/hooks/useGridConf";
@@ -13,29 +12,12 @@ import exportToPdf from "~/utils/pdf";
 
 const Main: Component = () => {
   const { rows, cols, color, setRows, setCols, setColor } = useGridConf();
-  const { setImageSrc, generateGrid, fullImageDataUrl, cellDataUrls } =
+  const { cellDataUrls } =
     useImageData();
 
-  const setImage = (image: string) => {
-    setImageSrc(image);
-    generateGrid(rows(), cols(), color());
-  };
-
-  const decorateIntFunc = (func: (arg: number) => (arg: number) => void) => {
-    return (arg: number) => {
-      func(arg);
-      generateGrid(rows(), cols(), color());
-    };
-  };
-
-  const setColorFunc = (col: string) => {
-    setColor(col);
-    generateGrid(rows(), cols(), color());
-  };
-
-  const exportFile = () => {
-    exportToPdf(fullImageDataUrl() || "", cellDataUrls(), rows(), cols());
-  };
+  const callback = (image: string) => {
+    exportToPdf(image || "", cellDataUrls(), rows(), cols());
+  }
 
   return (
     <div class="MainComponent">
@@ -43,14 +25,11 @@ const Main: Component = () => {
         rows={rows()}
         cols={cols()}
         color={color()}
-        setRows={decorateIntFunc(setRows)}
-        setCols={decorateIntFunc(setCols)}
-        setColor={setColorFunc}
+        setRows={setRows}
+        setCols={setCols}
+        setColor={setColor}
       />
-      <FileLoader imageCallback={setImage} dataUrl={fullImageDataUrl() || ""} />
-      <button type="button" onClick={exportFile} class="download-button">
-        Скачать
-      </button>
+      <FileLoader imageCallback={callback} dataUrl={""} />
     </div>
   );
 };

@@ -23,31 +23,11 @@ const FileLoader: Component<IFileLoaderProps> = (props: IFileLoaderProps) => {
   };
   return (
     <>
-      <FileInput label="Файл с картой" handleFileChange={handleFileChange} />
-      {/*
-      <div class="Image">
-        {props.dataUrl && (
-          <div style={{ marginBottom: "20px" }}>
-            <h2>Измененное изображение</h2>
-            <img
-              src={props.dataUrl!}
-              alt="Измененное изображение"
-              style={{
-                maxWidth: "100%",
-                height: "auto",
-                border: "1px solid #ccc",
-              }}
-            />
-            <div>
-              <a href={props.dataUrl!} download="modified.png">
-                Скачать измененное изображение
-              </a>
-            </div>
-          </div>
-        )}
-      </div>
-      */}
-    </>
+      <FileInput
+       label="Файл с картой"
+       handleFileChange={handleFileChange} 
+      />
+     </>
   );
 };
 

@@ -27,10 +27,6 @@
   border-radius: 4px;
   width: 15rem;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.file-input-button:hover {
   background-color: #357ab8;
 }
 
