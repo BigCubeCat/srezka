@@ -6,7 +6,7 @@ import FileInput from "./FileInput";
 
 interface IFileLoaderProps {
   dataUrl: string;
-  imageCallback: (src: string) => void;
+  imageCallback: (src: string, name: string) => void;
 }
 
 const FileLoader: Component<IFileLoaderProps> = (props: IFileLoaderProps) => {
@@ -16,18 +16,15 @@ const FileLoader: Component<IFileLoaderProps> = (props: IFileLoaderProps) => {
       const file = target.files[0];
       const reader = new FileReader();
       reader.onload = (ev) => {
-        props.imageCallback(ev.target?.result as string);
+        props.imageCallback(ev.target?.result as string, file.name as string);
       };
       reader.readAsDataURL(file);
     }
   };
   return (
     <>
-      <FileInput
-       label="Файл с картой"
-       handleFileChange={handleFileChange} 
-      />
-     </>
+      <FileInput label="Разрезать" handleFileChange={handleFileChange} />
+    </>
   );
 };
 

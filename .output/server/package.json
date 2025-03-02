@@ -1,0 +1,28 @@
+{
+  "name": "example-basic-prod",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@babel/runtime": "7.26.7",
+    "atob": "2.1.2",
+    "btoa": "1.2.1",
+    "canvg": "3.0.10",
+    "core-js": "3.40.0",
+    "dompurify": "2.5.8",
+    "fflate": "0.8.2",
+    "html2canvas": "1.4.1",
+    "jspdf": "2.5.2",
+    "node-mock-http": "1.0.0",
+    "pathe": "1.1.2",
+    "performance-now": "2.1.0",
+    "raf": "3.4.1",
+    "rgbcolor": "1.0.1",
+    "seroval": "1.2.1",
+    "seroval-plugins": "1.2.1",
+    "solid-js": "1.9.4",
+    "stackblur-canvas": "2.7.0",
+    "svg-pathdata": "6.0.3",
+    "vinxi": "0.4.3"
+  }
+}

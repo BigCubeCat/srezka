@@ -12,12 +12,10 @@ import exportToPdf from "~/utils/pdf";
 
 const Main: Component = () => {
   const { rows, cols, color, setRows, setCols, setColor } = useGridConf();
-  const { cellDataUrls } =
-    useImageData();
 
-  const callback = (image: string) => {
-    exportToPdf(image || "", cellDataUrls(), rows(), cols());
-  }
+  const callback = (image: string, file: string) => {
+    exportToPdf(image || "", file || "", rows(), cols(), color());
+  };
 
   return (
     <div class="MainComponent">
