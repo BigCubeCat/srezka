@@ -21,17 +21,12 @@
 }
 
 .file-input-button {
-  color: #ccc;
   border: none;
   padding: 8px 16px;
   border-radius: 4px;
   width: 15rem;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.file-input-button:hover {
-  background-color: #357ab8;
+  background-color: #7ab835;
 }
 
 .file-input-filename {
@@ -40,7 +35,6 @@
 }
 
 .download-button {
-  background-color: #7ab835;
   border: none;
   padding: 8px 16px;
   border-radius: 4px;
