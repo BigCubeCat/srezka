@@ -8,6 +8,7 @@ const MAX_WIDTH = A4_WIDTH_IN_MM - 2 * MARGIN; // Максимальная ши�
 const MAX_HEIGHT = A4_HEIGHT_IN_MM / 2 - 2 * MARGIN; // Максимальная высота для изображения (верхняя половина листа А4, равная А5)
 const GAP = 2; // Промежуток между кусочками в мм
 
+
 // Для перевода px -> мм (при экспорте первой страницы) выбираем DPI (например, 96)
 const DPI = 96;
 const CONVERT_TO_MM_SCALE = 25.4;
@@ -89,6 +90,7 @@ const exportToPdf = (
     // Рисуем вертикальные линии сетки
     ctx.strokeStyle = color;
     ctx.lineWidth = 4;
+
     for (let j = 0; j <= cols; j++) {
       const x = (j * canvas.width) / cols;
       ctx.beginPath();
@@ -110,6 +112,7 @@ const exportToPdf = (
     const numberedImageUrl = canvas.toDataURL("image/png");
 
     // Добавляем изображение с сеткой на первую страницу
+
     doc.addImage(
       numberedImageUrl,
       "PNG",
@@ -200,6 +203,7 @@ const exportToPdf = (
         currentPage++; // Увеличиваем счётчик страниц
         currentRow = 0; // Сбрасываем счётчик строк
       }
+
 
       // Рассчитываем координаты для размещения кусочка
       const x = MARGIN + currentCol * (pieceWidthMm + GAP);
