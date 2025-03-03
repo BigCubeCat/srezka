@@ -177,16 +177,45 @@ const exportToPdf = (
     const pieceWidthMm = scaledWidth / cols;
     const pieceHeightMm = scaledHeight / rows;
 
-    const countCols = Math.floor((A4_WIDTH_IN_MM - 3 * MARGIN) / (GAP + pieceHeightMm));
+    const countCols = Math.floor((A4_WIDTH_IN_MM - ((cols+4)*GAP) - MARGIN)/pieceWidthMm);
+    const countRows = Math.floor((A4_HEIGHT_IN_MM / 2 - MARGIN) / (pieceHeightMm + GAP));
 
-    const imgs = pieces.map((img, index) => {
-      const row = Math.floor(index / countCols);
-      const col = index % countCols;
-      const x = Math.floor(GAP + col * (pieceWidthMm + GAP));
-      const y = MARGIN + scaledHeight + MARGIN + (row * (pieceHeightMm + GAP));
+
+    // Размещаем кусочки на второй половине листа
+    let currentRow = 0; // Начинаем с нулевой строки
+    let currentCol = 0; // Начинаем с нулевого столбца
+    let currentPage = 1; // Счётчик страниц
+    doc.addPage(); // Добавляем новую страницу
+
+    pieces.forEach((img, index) => {
+      // Если кусочков больше, чем может поместиться в одной строке, переходим на следующую строку
+      if (currentCol >= countCols) {
+        currentCol = 0; // Сбрасываем счётчик столбцов
+        currentRow++;   // Переходим на следующую строку
+      }
+
+      // Если строк больше, чем может поместиться на одной странице, добавляем новую страницу
+      if (currentRow >= countRows*2) {
+        doc.addPage(); // Добавляем новую страницу
+        currentPage++; // Увеличиваем счётчик страниц
+        currentRow = 0; // Сбрасываем счётчик строк
+      }
+
+      // Рассчитываем координаты для размещения кусочка
+      const x = MARGIN + currentCol * (pieceWidthMm + GAP);
+
+      // Если это первая страница, кусочки добавляются на вторую половину листа
+      // Если это вторая страница и выше, кусочки добавляются на первую половину листа
+      const y = currentPage === 0
+        ? A4_HEIGHT_IN_MM / 2 + MARGIN + currentRow * (pieceHeightMm + GAP) // Вторая половина первой страницы
+        : MARGIN + currentRow * (pieceHeightMm + GAP); // Первая половина последующих страниц
+
+      // Добавляем кусочек на страницу
       doc.addImage(img, "png", x, y, pieceWidthMm, pieceHeightMm);
+
+      // Увеличиваем счётчик столбцов
+      currentCol++;
     });
-    console.log(imgs);
     doc.save(filename + "_splited.pdf");
   };
 };
